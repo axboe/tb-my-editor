@@ -11,7 +11,7 @@ import time
 #  - print here will send back to the front end, and won't work.
 
 global DEBUG
-DEBUG=1
+DEBUG=0
 global DBGFD
 global FILE_CONTAINING_CMD_TORUN
 FILE_CONTAINING_CMD_TORUN="tb-my-ed.cmd"
@@ -142,7 +142,7 @@ def invoke_vim(msg):
     dbgwr("cmd is: " + cmd)
 
     # in python 3, change this to subprocess.run()
-    p = subprocess.call(cmd, shell=True, stdout=subprocess.PIPE)
+    p = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
 
     dbgwr("invoke_vim done....")
 
@@ -171,10 +171,12 @@ def main(args):
     # write to file if there any unicode non-ascii characters.
     message = message.encode('ascii', 'replace')
     tmpfn = invoke_vim(message)
-    
+
     with open(tmpfn) as file:
         data = file.read()
         send_reply(data)
+
+    os.unlink(tmpfn)
 
     dbgwr("\n")
     if DEBUG:
